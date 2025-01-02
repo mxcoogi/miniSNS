@@ -11,3 +11,4 @@ class User:
     password : str
     created_at : datetime
     updated_at : datetime
+    memo : str | None

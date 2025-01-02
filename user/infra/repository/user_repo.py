@@ -13,7 +13,8 @@ class UserRepository(IUserRepository):
             name = user.name,
             password = user.password,
             created_at = user.created_at,
-            updated_at = user.updated_at
+            updated_at = user.updated_at,
+            memo = user.memo
         )
         with SessionLocal() as db:
             try:
@@ -32,3 +33,27 @@ class UserRepository(IUserRepository):
                 raise HTTPException(status_code=422)
             
             return UserV0(**row_to_dict(user))
+    
+    def find_by_id(self, id: str):
+        with SessionLocal() as db:
+            user = db.query(User).filter(User.id == id).first()
+        
+        if not user:
+            raise HTTPException(status_code=422)
+        
+        return UserV0(**row_to_dict(user))
+    
+    def update(self, user_v0 : UserV0):
+        with SessionLocal() as db:
+            user = db.query(User).filter(User.id == user_v0.id).first()
+        
+            if not user:
+                raise HTTPException(status_code=422)
+            user.name = user_v0.name
+            user.password = user_v0.password
+            db.add(user)
+            db.commit()
+        return user
+        
+
+

@@ -12,3 +12,11 @@ class IUserRepository(metaclass = ABCMeta):
         이메일로 유저 검색 없을경우 422에러
         """
         raise NotImplementedError
+    
+    @abstractmethod
+    def find_by_id(self, id : str) -> User:
+        raise NotImplementedError
+    
+    @abstractmethod
+    def update(self, user : User):
+        raise NotImplementedError
