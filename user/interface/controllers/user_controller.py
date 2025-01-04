@@ -1,9 +1,11 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from user.application.user_service import UserService
 from typing import Annotated
 from dependency_injector.wiring import inject, Provide
 from containers import Container
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(prefix="/users")
 
@@ -38,6 +40,8 @@ def update_user(
 
     return user
 
+
+
 @router.get("")
 @inject
 def get_users(page : int = 1,
@@ -51,3 +55,16 @@ def get_users(page : int = 1,
         "page" : page,
         "users" : users
     }
+
+@router.post("/login")
+@inject
+def login(
+    form_data : Annotated[OAuth2PasswordRequestForm, Depends()],
+    user_service : UserService = Depends(Provide[Container.user_service])
+):
+    access_token = user_service.login(
+        email = form_data.username,
+        password = form_data.password
+    )
+
+    return {"access_token" : access_token, "token_type" : "bearer"}

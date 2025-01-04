@@ -2,9 +2,10 @@ from ulid import ULID
 from datetime import datetime
 from user.domain.user import User
 from user.domain.repository.user_repo import IUserRepository
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from utils.crypto import Crypto
 from dependency_injector.wiring import inject
+from common.auth import create_access_token
 
 class UserService:
     @inject
@@ -58,3 +59,14 @@ class UserService:
     def get_users(self, page: int , items_per_page:int) -> tuple[int, list[User]]:
         users = self.user_repo.get_users(page, items_per_page)
         return users
+    
+    def login(self, email : str, password: str):
+        user = self.user_repo.find_by_email(email)
+
+        if not self.crypto.verify(password, user.password):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        
+        access_token = create_access_token(
+            payload={"user_id" : user.id}
+        )
+        return access_token
