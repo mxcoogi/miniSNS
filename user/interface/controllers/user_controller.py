@@ -6,6 +6,7 @@ from typing import Annotated
 from dependency_injector.wiring import inject, Provide
 from containers import Container
 from fastapi.security import OAuth2PasswordRequestForm
+from common.auth import CurrentUser, get_current_user
 
 router = APIRouter(prefix="/users")
 
@@ -29,15 +30,18 @@ class UpdateUserBody(BaseModel):
     name : str | None = None
     password : str | None = None
 
-@router.put("/{user_id}")
+@router.put("")
 @inject
 def update_user(
-    user_id : str,
-    user : UpdateUserBody,
+    current_user : Annotated[CurrentUser, Depends(get_current_user)],
+    body : UpdateUserBody,
     user_service : UserService = Depends(Provide[Container.user_service])
 ):
-    user = user_service.update_user(user_id, user.name, user.password)
-
+    user = user_service.update_user(
+        user_id=current_user.id,
+        name=body.name,
+        password=body.password
+    )
     return user
 
 
