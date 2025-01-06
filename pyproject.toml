@@ -17,6 +17,8 @@ alembic = "^1.14.0"
 dependency-injector = "^4.44.0"
 python-jose = {extras = ["cryptograpy"], version = "^3.3.0"}
 python-multipart = "^0.0.20"
+python-dotenv = "^1.0.1"
+pydantic-settings = "^2.7.1"
 
 
 [build-system]

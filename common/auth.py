@@ -4,9 +4,11 @@ from jose import JWTError, jwt
 from dataclasses import dataclass
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
+from config import get_settings
 
+settings=get_settings()
 
-SECRET_KEY = "MINISNS"
+SECRET_KEY = settings.jwt_secret
 ALGORITHM = "HS256"
 
 def create_access_token(

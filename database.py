@@ -1,8 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from config import get_settings
 
-SQLALCHEMY_DATABASE_URL = "mysql+mysqldb://root:test@127.0.0.1/minisns"
+settings = get_settings()
+
+SQLALCHEMY_DATABASE_URL = f"mysql+mysqldb://{settings.database_name}:{settings.database_password}@127.0.0.1/minisns"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit = False, autoflush=False, bind=engine)
 
