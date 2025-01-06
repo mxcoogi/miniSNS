@@ -42,3 +42,30 @@ def create_note(
     response = asdict(note)
     response.update({"tags" : [tag.name for tag in note.tags]})
     return response
+
+class GetNoteResponse(BaseModel):
+    total_count : int
+    page:int
+    notes : list[NoteResponse]
+
+@router.get("", response_model=GetNoteResponse)
+@inject
+def get_notes(page : int = 2, item_per_page : int = 10, 
+              current_user:CurrentUser = Depends(get_current_user), note_service : NoteService = Depends(Provide[Container.note_repo])):
+    total_count, notes = note_service.get_notes(
+        user_id=current_user.id,
+        page=page,
+        item_per_page=item_per_page
+    )
+    
+    res = []
+    for note in notes:
+        note_dict = asdict(note)
+        note_dict.update({"tags" : [tag.name for tag in note.tags]})
+        res.append(note_dict)
+
+    return {
+        "total_count" : total_count,
+        "page" : page,
+        "notes" : res
+    }

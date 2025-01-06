@@ -22,7 +22,8 @@ class Note(Base):
     tags = relationship(
         "Tag",
         secondary=note_tag_association,
-        back_populates="notes"
+        back_populates="notes",
+        lazy="joined"
     )
 
 class Tag(Base):
@@ -36,5 +37,6 @@ class Tag(Base):
     notes = relationship(
         "Note",
         secondary=note_tag_association,
-        back_populates="tags"
+        back_populates="tags",
+        lazy="joined"
     )

@@ -40,3 +40,6 @@ class NoteService:
         self.note_repo.create_note(user_id, note)
 
         return note
+    
+    def get_notes(self, user_id : str, page:int, item_per_page:int) -> tuple[int, list[Note]]:
+        return self.note_repo.get_notes(user_id, page, item_per_page)
